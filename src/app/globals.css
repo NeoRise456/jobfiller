@@ -1,26 +1,301 @@
 @import "tailwindcss";
 
+/*
+  DIRECTION CONTRACT — seed key 43f20caa (brief-pinned world overrides roll)
+  THESIS: resume tailoring as raw industrial machinery — thick black borders on
+  #000, bone-white type, one acid accent. Refuses the soft-card SaaS look.
+  OWN-WORLD: pitch black ground, 3px solid #f5f5f0 borders, hard offset shadows
+  (no blur), Archivo Black display / Space Mono body, accent #e8ff00 used only
+  on score, active state, primary action.
+  STORY: user drops resume + JD, machine returns verdict; drag blocks to build;
+  export black-on-white print sheet.
+  FIRST VIEWPORT: full-bleed MARQUEE title, two raw input panels side by side,
+  giant ANALYZE block bottom-right in accent.
+  FORM: single-page workbench, pinned left rail steps; FINISH line below.
+  FINISH: unreviewed and undocumented is unfinished; this build ends with the
+  finish review, the verdict, and DESIGN.md
+*/
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #000000;
+  --ink: #f5f5f0;
+  --accent: #e8ff00;
+  --dim: #8a8a80;
+  --line: #f5f5f0;
+  --paper: #ffffff;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-bg: var(--bg);
+  --color-ink: var(--ink);
+  --color-accent: var(--accent);
+  --color-dim: var(--dim);
+  --color-line: var(--line);
+  --color-paper: var(--paper);
+  --font-display: var(--font-archivo-black);
+  --font-mono: var(--font-space-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: dark;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-space-mono), ui-monospace, monospace;
+}
+
+::selection {
+  background: var(--accent);
+  color: #000;
+}
+
+/* brutalist primitives */
+.bx {
+  border: 3px solid var(--line);
+}
+.bx-accent {
+  border: 3px solid var(--accent);
+}
+.shadow-hard {
+  box-shadow: 6px 6px 0 0 var(--line);
+}
+.shadow-hard-accent {
+  box-shadow: 6px 6px 0 0 var(--accent);
+}
+.btn-brutal {
+  border: 3px solid var(--line);
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-display), sans-serif;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: none;
+}
+.btn-brutal:hover {
+  background: var(--ink);
+  color: #000;
+}
+.btn-brutal:active {
+  transform: translate(3px, 3px);
+  box-shadow: none !important;
+}
+.btn-brutal:disabled {
+  border-color: var(--dim);
+  color: var(--dim);
+  cursor: not-allowed;
+  background: var(--bg);
+}
+.btn-primary {
+  background: var(--accent);
+  color: #000;
+  border: 3px solid var(--accent);
+}
+.btn-primary:hover {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: #000;
+}
+
+input,
+textarea,
+select {
+  background: var(--bg);
+  color: var(--ink);
+  border: 3px solid var(--line);
+  font-family: var(--font-space-mono), monospace;
+}
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 3px solid var(--accent);
+  outline-offset: 0;
+}
+button:focus-visible,
+[role="button"]:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* drag handle grab */
+.grab {
+  cursor: grab;
+}
+.grab:active {
+  cursor: grabbing;
+}
+
+/* dotted drop zone */
+.dropzone {
+  border: 3px dashed var(--line);
+}
+.dropzone.over {
+  border-color: var(--accent);
+  background: rgba(232, 255, 0, 0.06);
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%, 100% { opacity: 0; }
+}
+.blink {
+  animation: blink 1s steps(1) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.marquee-track {
+  display: inline-flex;
+  white-space: nowrap;
+  animation: marquee 22s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track,
+  .blink {
+    animation: none;
+  }
+}
+
+/* print: exported sheet flips to white paper */
+@media print {
+  body {
+    background: var(--paper);
+    color: #000;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-sheet {
+    border: none !important;
+    box-shadow: none !important;
+  }
+  input,
+  textarea {
+    background: var(--paper);
+    color: #000;
+    border: none;
+  }
+
+  /* classic single-column resume template (Resume-Matcher style) */
+  @page {
+    margin: 0.6in;
+  }
+  .print-sheet:has(.print-classic, .print-cover) {
+    padding: 0 !important;
+  }
+  .print-classic,
+  .print-classic-name,
+  .print-classic-h {
+    font-family: Georgia, "Times New Roman", serif;
+  }
+  .print-classic {
+    color: #000;
+    background: #fff;
+  }
+  .print-classic-name {
+    font-size: 21pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: -0.01em;
+    text-align: center;
+    line-height: 1.2;
+    margin: 0;
+  }
+  .print-classic-title {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    text-align: center;
+    margin: 4pt 0 2pt;
+  }
+  .print-classic-contact {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.5pt;
+    text-align: center;
+    margin: 0 0 6pt;
+    border-bottom: 1px solid #9ca3af;
+    padding-bottom: 8pt;
+  }
+  .print-classic-h {
+    font-size: 12.5pt;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 1px solid #9ca3af;
+    padding-bottom: 1pt;
+    margin: 10pt 0 5pt;
+    page-break-after: avoid;
+  }
+  .print-classic-role {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 11pt;
+    font-weight: bold;
+    margin: 6pt 0 0;
+    page-break-after: avoid;
+  }
+  .print-classic-dates {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 9.5pt;
+    font-weight: normal;
+    font-style: italic;
+  }
+  .print-classic-company {
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 10.5pt;
+    font-style: italic;
+    margin: 0 0 3pt;
+    page-break-after: avoid;
+  }
+  .print-classic-list {
+    font-size: 10.5pt;
+    line-height: 1.4;
+    list-style: disc outside;
+    padding-left: 1.2em;
+    margin: 0;
+  }
+  .print-classic-list li {
+    margin: 0 0 3pt;
+    padding-left: 0.2em;
+    page-break-inside: avoid;
+  }
+
+  /* classic cover letter — pairs with .print-classic, reuses the @page above */
+  .print-cover {
+    font-family: Georgia, "Times New Roman", serif;
+    color: #000;
+    background: #fff;
+    font-size: 11pt;
+    line-height: 1.6;
+    text-align: justify;
+    /* room for a handwritten signature after the last paragraph */
+    padding-bottom: 1.5in;
+  }
+  .print-cover-head {
+    margin: 0 0 12pt;
+    line-height: 1.4;
+  }
+  .print-cover-date {
+    margin: 0 0 12pt;
+  }
+  .print-cover-recipient {
+    margin: 0 0 12pt;
+    line-height: 1.4;
+  }
+  .print-cover-salutation {
+    margin: 0 0 8pt;
+  }
+  .print-cover-p {
+    margin: 0 0 4mm;
+    page-break-inside: avoid;
+  }
+  .print-cover-signoff {
+    margin: 18pt 0 0;
+  }
+  .print-cover-sign {
+    margin: 4pt 0 0;
+    font-weight: bold;
+  }
 }
