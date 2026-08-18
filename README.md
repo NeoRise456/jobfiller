@@ -8,6 +8,8 @@ Rebuild of [srbhr/Resume-Matcher](https://github.com/srbhr/Resume-Matcher) as a
 single-user Next.js app using the Z.AI GLM-5.2 reasoning model. No accounts, no
 database — session state only.
 
+![JobFiller preview](public/preview.png)
+
 ## Features
 
 - **Resume upload** — PDF (parsed server-side), DOCX, or TXT
